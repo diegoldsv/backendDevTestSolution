@@ -2,62 +2,124 @@ package com.itx.technicaltest.service;
 
 import com.itx.technicaltest.entity.Product;
 import org.apache.juli.logging.Log;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.juli.logging.LogFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class ProductService {
 
-    @Autowired
-    RestTemplate restTemplate;
-    @Autowired
-    Log LOGGER;
+    private final RestTemplate restTemplate;
+    private final Log LOGGER;
 
-    public String[] getSimilarProductsIds(String id)
+    private final String mocksBaseUrl="http://localhost:3001/product";
+
+    public ProductService(RestTemplateBuilder restTemplateBuilder)
     {
-        //Prepare Request
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        RequestEntity request;
-        try {
-            request = new RequestEntity(headers, HttpMethod.GET, new URI("http://localhost:3001/product/"+id+"/similarids"));
-        }
-        catch (URISyntaxException e)
-        {
-            LOGGER.error("URL: http://localhost:3001/product/{id}/similarids |" + e.getMessage());
-            return null;
-        }
-
-        //Execute API Rest Request - Get Similar Products Ids
-        ResponseEntity<String[]> response = restTemplate.exchange(request, String[].class);
-
-        return response.getBody();
+        this.restTemplate = restTemplateBuilder.build();
+        this.LOGGER = LogFactory.getLog(ProductService.class);
     }
 
-    public Product getDetails(String id)
+    public List<Product> getSimilarProducts(Integer id)
     {
-        //Prepare Request
+        LOGGER.debug(String.format("Getting similar product ids for product %d...", id));
+        List<Integer> similarProductsIds = this.getSimilarProductsIds(id);
+        LOGGER.debug(String.format("Similar ids found: %d", similarProductsIds.size()));
+
+        //Search detail of each similar product
+        ArrayList<Product> similarProducts = new ArrayList<>();
+        for(Integer similarProductId: similarProductsIds)
+        {
+            LOGGER.debug(String.format("Getting details for product %d...", similarProductId));
+            Product productDetail = this.getDetails(similarProductId);
+            if(productDetail != null)
+            {
+                similarProducts.add(productDetail);
+                LOGGER.debug("Product found!");
+            }
+            else
+            {
+                LOGGER.debug("Product not found! It is not included in the list of similar products");
+            }
+        }
+
+        return similarProducts;
+    }
+
+    public List<Integer> getSimilarProductsIds(Integer id)
+    {
+        //BUILD REQUEST: Get Similar Products Ids
+        RequestEntity<Void> request;
+        //Headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        RequestEntity request;
-        try{
-             request = new RequestEntity(headers, HttpMethod.GET, new URI("http://localhost:3001/product/"+id));
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        //Path
+        String mockSimilarIdsPath = "/{id}/similarids";
+        String path = this.mocksBaseUrl + mockSimilarIdsPath.replace("{id}", id.toString());
+        try {
+            request = new RequestEntity<>(headers, HttpMethod.GET, new URI(path));
         }
         catch (URISyntaxException e)
         {
-            LOGGER.error("URL: http://localhost:3001/product/ |" + e.getMessage());
+            LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
+            return Collections.emptyList();
+        }
+
+        //EXECUTE REQUEST
+        try{
+            LOGGER.debug(String.format("Executing request: %s...", path));
+            ResponseEntity<List<Integer>> response = restTemplate.exchange(request, new ParameterizedTypeReference<>(){});
+            LOGGER.debug(String.format("[STATUS] %s", response.getStatusCode()));
+            LOGGER.debug(String.format("[RESPONSE] %s", response.getBody()));
+            return response.getBody();
+        }
+        catch (RestClientResponseException e)
+        {
+            LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
+            return Collections.emptyList();
+        }
+    }
+
+    public Product getDetails(Integer id)
+    {
+        //PREPARE REQUEST: Get Product details
+        RequestEntity<Void> request;
+        //Headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        //Path
+        String mockProductDetailsPath = "/{id}";
+        String path = this.mocksBaseUrl + mockProductDetailsPath.replace("{id}", id.toString());
+        try{
+             request = new RequestEntity<>(headers, HttpMethod.GET, new URI(path));
+        }
+        catch (URISyntaxException e)
+        {
+            LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
             return null;
         }
 
-        //Execute API Rest Request - Get Similar Products Ids
-        ResponseEntity<Product> response = restTemplate.exchange(request, Product.class);
-
-        return response.getBody();
+        //EXECUTE REQUEST
+        try{
+            LOGGER.debug(String.format("Executing request: %s...", path));
+            ResponseEntity<Product> response = restTemplate.exchange(request, Product.class);
+            LOGGER.debug(String.format("[STATUS] %s", response.getStatusCode()));
+            LOGGER.debug(String.format("[RESPONSE] %s", response.getBody()));
+            return response.getBody();
+        }
+        catch (RestClientResponseException e)
+        {
+            LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
+            return null;
+        }
     }
 }

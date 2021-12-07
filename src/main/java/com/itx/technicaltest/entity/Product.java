@@ -1,23 +1,11 @@
 package com.itx.technicaltest.entity;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
 
     private String id;
     private String name;
     private Double price;
     private Boolean availability;
-
-    @JsonCreator
-    public Product(String id, String name, Double price, Boolean availability) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.availability = availability;
-    }
 
     public String getId() {
         return id;
