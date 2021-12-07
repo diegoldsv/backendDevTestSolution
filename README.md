@@ -13,7 +13,7 @@ This application expose an endpoint to find similar products from a product Id.
 ---
 ## How to execute
 
-**Requeriments**
+**Requirements**
 
 - backendDevTest downloaded
 - backendDevTestSolution (this repo) downloaded
@@ -30,7 +30,7 @@ To run the app backendDevTestSolution you have two options:
 
 ### JDK + mvnw
 
-**Requeriments**
+**Requirements**
 
 * JDK installed
 * Environment variable: JAVA_HOME pointed to JDK path location
@@ -44,7 +44,7 @@ Open a terminal in the project folder and execute:
 
 ### JAR
 
-**Requeriments**
+**Requirements**
 
 - Java Runtime Environment installed
 
@@ -64,4 +64,4 @@ You can test the endpoint: GET /product/{productId}/similar
 1. Open a web browser
 2. Type http://localhost:5000/product/1/similar
 
-Note: In the repository [backendDevTest](https://github.com/dalogax/backendDevTest) you can find how to launch a test script which uses the k6 testing tool 
+*Note: In the repository [backendDevTest](https://github.com/dalogax/backendDevTest) you can find how to launch a test script which uses the k6 testing tool* 
