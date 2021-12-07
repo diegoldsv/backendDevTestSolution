@@ -25,10 +25,10 @@ Follow the instructions explained there to start the mocks from Docker and then 
 
 To run the app backendDevTestSolution you have two options:
 
-- Using mvnw script (included in the project) and the JDK
+- Using mvnw script (included in the project)
 - Running the .jar file (you can find it in the ./jar folder)
 
-### JDK + mvnw 
+### mvnw 
 
 **Requirements**
 
