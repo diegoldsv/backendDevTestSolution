@@ -1,6 +1,6 @@
 # backendDevTestSolution
 
-This application expose an endpoint to find similar products from a product Id.   
+This application exposes an endpoint to find similar products from a product Id.   
 *Solution to the test: [backendDevTest](https://github.com/dalogax/backendDevTest)*  
 
 
