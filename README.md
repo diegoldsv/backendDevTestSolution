@@ -33,7 +33,7 @@ To run the app backendDevTestSolution you have two options:
 **Requirements**
 
 * JDK installed
-* Environment variable: JAVA_HOME pointed to JDK path location
+* Environment variable: JAVA_HOME pointing to the JDK path
 
 **Start the app**
 
