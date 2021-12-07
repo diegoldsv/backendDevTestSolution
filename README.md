@@ -11,7 +11,7 @@ This application expose an endpoint to find similar products from a product Id.
 - JDK 17
 
 ---
-## How to execute
+## How to execute the app
 
 **Requirements**
 
@@ -56,9 +56,9 @@ java -jar .\jar\technicaltest-0.0.1-SNAPSHOT.jar
 ```
 
 ---
-## How to test
+## How to test the app
 
-Once the project is launched, it will be running on port 5000.
+Once the app is launched, it will be running on port 5000.
 You can test the endpoint: GET /product/{productId}/similar
 
 1. Open a web browser
