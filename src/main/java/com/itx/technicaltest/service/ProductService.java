@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.*;
 
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -87,6 +88,11 @@ public class ProductService {
             LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
             return Collections.emptyList();
         }
+        catch (ResourceAccessException e)
+        {
+            LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
+            return Collections.emptyList();
+        }
     }
 
     public Product getDetails(Integer id)
@@ -117,6 +123,11 @@ public class ProductService {
             return response.getBody();
         }
         catch (RestClientResponseException e)
+        {
+            LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
+            return null;
+        }
+        catch (ResourceAccessException e)
         {
             LOGGER.error(String.format("Request: %s, Exception: %s", path, e.getMessage()));
             return null;
